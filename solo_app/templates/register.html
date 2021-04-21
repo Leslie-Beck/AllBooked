@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Booked - Registration</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="{% static '/css/book_img.jpg' %}" rel="image_of_Books" />
+
+</head>
+
+<body>
+    <img src="{% static '/css/Book_img.jpg' %}" alt="Image of Books" class="d-flex mx-auto mb-4" />
+    <div id="reg-container">
+        <div class="title">Create an Account</div>
+        <div class="sub-container">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <form action="/users/create" method="POST">
+                    {% csrf_token %}
+                    <div class="form">
+                        <label>First Name: <input type="text" name="first_name" placeholder="Chandler"></label>
+                    </div>
+                    <div class="form">
+                        <label>Last Name: <input type="text" name="last_name" placeholder="Bing"></label>
+                    </div>
+                    <div class="form">
+                        <label>Email: <input type="text" name="email"
+                                placeholder="MissChanandlerBong@email.com"></label>
+                    </div>
+                    <div class="form">
+                        <label>Password: <input type="password" name="password" placeholder="........"></label>
+                    </div>
+                    <div class="form">
+                        <label>Confirm Password: <input type="password" name="conf_password"
+                                placeholder="........"></label>
+                    </div>
+                    <input class="btn-grad" type="submit" value="Register">
+                </form>
+                <a class="navigate" href="/">Already Registered? Login Here</a>
+            
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>

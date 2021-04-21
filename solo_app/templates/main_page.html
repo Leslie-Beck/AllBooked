@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/starrr.css' %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="{% static '/css/book_img.jpg' %}" rel="image_of_Books" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    {% load static %}
+    <script src="{% static 'js/starrr.js' %}"></script>
+
+</head>
+
+<body>
+    <img src="{% static '/css/Book_img.jpg' %}" alt="Image of Books" class="d-flex mx-auto mb-4" />
+    <div id="reg-container">
+        <div class="title">Welcome, {{current_user.first_name}}</div>
+        <div class="header">
+            <a href="/logout">Log Out</a>
+        </div>
+
+
+        <div class="sub-container">
+            <h2>Books Read</h2><br>
+            <div class="reviews">
+                {% for one_book in all_books %}
+
+                <h3><a href="/books/{{one_book.id}}">{{one_book.title}}</a> | {{one_book.uploaded_by.first_name}} {{one_book.uploaded_by.last_name}}</h3>
+                {% if current_user.id == one_book.uploaded_by.id %}
+                <form class="edit" action="/books/{{one_book.id}}/delete" method="POST">
+                    {% csrf_token %}
+                    <input class="delete_btn" type="submit" value="delete">
+                </form>
+
+                {% endif %}
+                {% endfor %}
+            </div>
+
+
+            <script>
+                $('add_book').submit(function (e) {
+                    console.log('form submitted')
+                    e.preventDefault();
+                    $.ajax({
+                        url: "/books/create_ajax",
+                        method: "POST",
+                        data: $(this).serialize(),
+                        success: function (serverResponse) {
+                            console.log('back from the backend')
+                            console.log(serverResponse)
+                            $('#books').html(serverResponse)
+                        },
+                    })
+                })
+            </script>
+
+
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <form class="add_book" action="/books/create" method="POST">
+                {% csrf_token %}
+                <div class="form">
+                    <label>Title: <input type="text" name="title"></label>
+                </div>
+                <div class="form">
+                    <div class="starrr">
+                        <label>Rating: </label>
+                        <input type="hidden" id="star_rating" name="rating" />
+                        <script>
+
+                            $('.starrr').starrr({
+                                change: function (e, value) {
+                                    $("#star_rating").val(value);
+                                }
+                            })
+                        </script>
+                    </div>
+                </div>
+                <div class="form">
+                    <label>Review: <input type="text" name="review"></label>
+                </div>
+                <input class="submit" type="submit" value="Add Book">
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
+
+

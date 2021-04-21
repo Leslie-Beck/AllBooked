@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Booked</title>
+    
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="{% static '/css/book_img.jpg' %}" rel="image_of_Books" />
+
+</head>
+
+<body>
+    <img src="{% static '/css/Book_img.jpg' %}" alt="Image of Books" class="d-flex mx-auto mb-4" />
+    <div id="reg-container">
+
+
+        <h2>Stay Booked - Stay Hooked</h2>
+        <p>Welcome to <span>All Booked</span>, a social media site for tracking and reviewing books you and your book club have read.
+            <span>All Booked</span>
+            allows you to interact with your friends and share books you love.</p>
+
+        <div class="title">All Booked</div>
+        <div class="sub-container">
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            <form action="/users/login" method="POST">
+                {% csrf_token %}
+                <div class="form">
+                    <label>Email: <input type="text" name="email" placeholder="MissChanandlerBong@email.com"></label>
+                </div>
+                <div class="form">
+                    <label>Password: <input type="password" name="password" placeholder="........"></label>
+                </div>
+                <input class="btn-grad" type="submit" value="Login">
+            </form>
+            <a class="navigate" href="/register">Don't Have an Account? Register</a>
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/starrr.css' %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="{% static '/css/book_img.jpg' %}" rel="image_of_Books" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    {% load static %}
+    <script src="{% static 'js/starrr.js' %}"></script>
+</head>
+
+<body>
+    <img src="{% static '/css/Book_img.jpg' %}" alt="Image of Books" class="d-flex mx-auto mb-4" />
+    <div id="reg-container">
+        <div class="title">Welcome, {{current_user.first_name}}</div>
+        <div class="header">
+            <a href="/users/profile">Back To Profile</a>
+            <a href="/logout">Log Out</a>
+        </div>
+
+        <div class="sub-container">
+            <h2>{{this_book.title}}</h2>
+            <h2>Reviews</h2>
+            {% for each_review in all_reviews %}
+            <div class="reviews">
+                <h4><span>{{each_review.uploaded_by.first_name}} {{each_review.uploaded_by.last_name}} | </span><div class='starrr'>
+                    <script>
+                        var this_rating = "{{ each_review.rating }}"
+                        $('.starrr').starrr({
+                            rating: this_rating
+                        })
+                    </script>
+                </div></h4>
+                
+                <h5>{{each_review.review}}</h5>
+                <div class="buttons">
+                    {% if current_user in each_review.users_who_like.all %}
+                    <form action="/books/{{this_book.id}}/{{each_review.id}}/unlike" method="POST">
+                        {% csrf_token %}
+                        <input class="like_btn" type="submit" value="Unlike">
+                    </form>
+                    {% else %}
+                    <form action="/books/{{this_book.id}}/{{each_review.id}}/like" method="POST">
+                        {% csrf_token %}
+                        <input class="like_btn" type="submit" value="Like">
+                    </form>
+                    {% endif %}
+                    {% if current_user.id == each_review.uploaded_by.id %}
+                    <form class="edit" action="/books/{{this_book.id}}/delete" method="POST">
+                        {% csrf_token %}
+                        <input class="like_btn" type="submit" value="delete">
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            <div id="comments">
+                {% for each_comment in each_review.comments_on.all %}
+                <h6><span>{{each_comment.posted_by.first_name}}</span> | {{each_comment.comment}}</h6><br>
+                {% endfor %}
+                <form action="/books/{{this_book.id}}/addComment/{{each_review.id}}" method="POST">
+                    {% csrf_token %}
+                    <div class="form">
+                        <textarea name="comment"></textarea>
+                    </div>
+                    <input class="small_btn" type="submit" value="Post a comment">
+                </form>
+            </div>
+            {% endfor %}
+
+        </div>
+        <div id="forms">
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <form action="/books/{{this_book.id}}/addReview" method="POST">
+                {% csrf_token %}
+                <div class="form">
+                    <div class="starrr">
+                        <label>Rating: </label>
+                        <input type="hidden" id="star_rating" name="rating" />
+                        <script>
+
+                            $('.starrr').starrr({
+                                change: function (e, value) {
+                                    $("#star_rating").val(value);
+                                }
+                            })
+                        </script>
+                    </div>
+                </div>
+                <div class="form">
+                    <label>Review: <input type="text" name="review"></label>
+                </div>
+                <input class="submit" type="submit" value="Review This Book">
+            </form>
+        </div>
+</body>
+
+</html>
